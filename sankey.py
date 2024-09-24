@@ -42,12 +42,17 @@ def sankey(df_pandas,categorical_dimensions,ys,height,width,colorOn):
 
   fig.update_layout(
 
-        #   height=height,
-        #   width=width,
-          margin={'t':20,'l':20,'b':20,'r':0},
+          height=height,
+          width=width,
+          margin={'t':20,'l':150,'b':20,'r':0},
           # xaxis={'title': 'Horsepower'},
           # yaxis={'title': 'MPG', 'domain': [0.6,1]},
-          dragmode='lasso', hovermode='closest')
+          dragmode='lasso', hovermode='closest',
+          font=dict(
+                family="Sans Serif",
+                size=13,  # Set the font size here
+                color="#4B2E2A"
+            ))
 
 
 

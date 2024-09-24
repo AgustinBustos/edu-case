@@ -103,8 +103,8 @@ try:
 #   cutter=1e-10
 except:
   cutter=1e-10
-print('-----------------------------')
-print(cutter)
+# print('-----------------------------')
+# print(cutter)
 clf = DecisionTreeClassifier(min_impurity_decrease=cutter,min_samples_leaf=10)
 clf.fit(X_meta, y_meta)
 # nodes.append(clf.tree_.node_count)
