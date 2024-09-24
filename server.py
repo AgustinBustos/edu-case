@@ -56,9 +56,9 @@ with st.sidebar:
         # ChkBtnStatusAndAssignColour()   
           
 
-# var=st.selectbox('Main column to analyse',tuple([i for i in df.columns[2:] if i!='y']))
+var=st.selectbox('Main column to analyze',tuple([i for i in df.columns[2:] if i!='y']))
 x_cols=st.multiselect("Columns to work with:",list([i for i in df.columns[2:] if i!='y']),['Institucion','Año','Curso','Carrera 1 Clustered','Gender'],)
-var=x_cols[0] if len(x_cols)>0 else 'Carrera 1 Clustered'
+# var=x_cols[0] if len(x_cols)>0 else 'Carrera 1 Clustered'
 df['ones']=1.
 color='University'
 bar1=px.bar(df.groupby([var,color],as_index=False).sum().sort_values('ones',ascending=False),x=var,y='ones',color=color,color_discrete_sequence=color_palette)
@@ -102,7 +102,7 @@ except:
   cutter=1e-10
 clf = DecisionTreeClassifier(min_impurity_decrease=cutter,min_samples_leaf=10)
 clf.fit(X_meta, y_meta)
-nodes.append(clf.tree_.node_count)
+# nodes.append(clf.tree_.node_count)
 viz_model = dtreeviz.model(clf,
                            X_train=X_meta, y_train=y_meta,
                            feature_names=x_cols_2,
@@ -110,8 +110,21 @@ viz_model = dtreeviz.model(clf,
                            class_names=['other', 'own',])
 
 v = viz_model.view()
-print(v)
+# viz_model.figure
+# fig = viz_model.get_figure()
+# fig.patch.set_facecolor('#fafafa')
 # v.show()
 # displayHTML(v.svg())
 v.save("mini_pred.svg")
+file_path="mini_pred.svg"
+with open(file_path, 'r', encoding='utf-8') as file:
+    svg_content = file.read()
+
+# Replace the old string with the new string
+updated_content = svg_content.replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"')
+
+# Write the updated content back to the SVG file
+with open(file_path, 'w', encoding='utf-8') as file:
+    file.write(updated_content)
 st.image('mini_pred.svg',use_column_width=True)
+# st.pyplot(fig)
