@@ -58,7 +58,7 @@ with st.sidebar:
         # ChkBtnStatusAndAssignColour()   
           
 
-var=st.selectbox('Main column to analyze',tuple([i for i in df.columns[1:] if i!='y']))
+var=st.selectbox('Main column to analyze:',tuple([i for i in df.columns[1:] if i!='y']))
 x_cols=st.multiselect("Columns to work with:",list([i for i in df.columns[1:] if i!='y']),['Institucion','Año','Curso','Carrera 1 Clustered','Gender'],)
 # var=x_cols[0] if len(x_cols)>0 else 'Carrera 1 Clustered'
 df['ones']=1.
@@ -68,10 +68,14 @@ bar2=px.bar(df.groupby([var],as_index=False).mean(numeric_only=True).sort_values
 scatter=px.scatter(df.groupby([var],as_index=False).agg({'y':'mean','ones':'sum'}),x='ones',y='y',color=var,size='ones',log_x=True,color_discrete_sequence=color_palette)
 
 col1, col2 = st.columns(2)
+col1.subheader(f'Chosen University By "{var}"')
 col1.plotly_chart(bar1, use_container_width=True)
+col2.subheader(f'Chosen University Share By "{var}"')
 col2.plotly_chart(bar2, use_container_width=True)
+st.subheader(f'Size of "{var}" against University Share')
 st.plotly_chart(scatter, use_container_width=True)
 
+st.subheader('Path Of Chosen Variables')
 san=sankey(df,x_cols+['University'],'ones',500,10000,-1)
 st.plotly_chart(san, use_container_width=True)
 
@@ -144,6 +148,7 @@ with open(file_path, 'w', encoding='utf-8') as file:
 #     </style>
 #     """, unsafe_allow_html=True
 # )
+st.subheader('Recomended Tree Variables')
 st.image('mini_pred.svg',width=600) #use_column_width=True
 # st.pyplot(fig)
 
@@ -159,4 +164,5 @@ X=meta_df[no_corr].to_numpy()
 y=df['y'].to_numpy()
 
 results = sm.Logit(y, X).fit()
+st.subheader('Z-values Of Variables')
 st.write(results.summary(xname=no_corr))
