@@ -15,15 +15,17 @@ from color_palette import color_palette
 # sudo apt install font-manager
 st.set_page_config(layout="wide")
 
-st.title('Edu Case')
+st.title('Edu-Case')
 df=pd.read_csv('Informe Alumnos Insurgentes Processed.csv')
+df=df.fillna('None')
+# df.drop(['Email', 'Nombre y Apellido'],axis=1).to_csv('Informe Alumnos Insurgentes Processed2.csv')
 
 # var='Carrera 1 Clustered'
 
 with st.sidebar:
     left_co, cent_co,last_co,other ,ja,last= st.columns(6)
     with cent_co:
-        st.image('uin.png',width=150)
+        st.image('uin.svg',width=170)
     st.write('')
     with st.expander("Visualization:"):
         optionss=('Manufacturer', 'Brand', 'Channel', 'Sub Channel', 'Variable')
@@ -56,14 +58,14 @@ with st.sidebar:
         # ChkBtnStatusAndAssignColour()   
           
 
-var=st.selectbox('Main column to analyze',tuple([i for i in df.columns[2:] if i!='y']))
-x_cols=st.multiselect("Columns to work with:",list([i for i in df.columns[2:] if i!='y']),['Institucion','Año','Curso','Carrera 1 Clustered','Gender'],)
+var=st.selectbox('Main column to analyze',tuple([i for i in df.columns[1:] if i!='y']))
+x_cols=st.multiselect("Columns to work with:",list([i for i in df.columns[1:] if i!='y']),['Institucion','Año','Curso','Carrera 1 Clustered','Gender'],)
 # var=x_cols[0] if len(x_cols)>0 else 'Carrera 1 Clustered'
 df['ones']=1.
 color='University'
 bar1=px.bar(df.groupby([var,color],as_index=False).sum().sort_values('ones',ascending=False),x=var,y='ones',color=color,color_discrete_sequence=color_palette)
 bar2=px.bar(df.groupby([var],as_index=False).mean(numeric_only=True).sort_values('y',ascending=False),x=var,y='y',color_discrete_sequence=color_palette)
-scatter=px.scatter(df.groupby([var],as_index=False).agg({'y':'mean','ones':'sum'}),x='ones',y='y',color=var,log_x=True)
+scatter=px.scatter(df.groupby([var],as_index=False).agg({'y':'mean','ones':'sum'}),x='ones',y='y',color=var,size='ones',log_x=True,color_discrete_sequence=color_palette)
 
 col1, col2 = st.columns(2)
 col1.plotly_chart(bar1, use_container_width=True)
@@ -97,9 +99,12 @@ for cut in space:
 
 
 try:
-  cutter=space[1:][np.argmax(np.diff(nodes))-1]+1e-10
+  cutter=space[1:][np.argmax(np.diff(nodes))-1]#+1e-10
+#   cutter=1e-10
 except:
   cutter=1e-10
+print('-----------------------------')
+print(cutter)
 clf = DecisionTreeClassifier(min_impurity_decrease=cutter,min_samples_leaf=10)
 clf.fit(X_meta, y_meta)
 # nodes.append(clf.tree_.node_count)
@@ -126,5 +131,32 @@ updated_content = svg_content.replace('fill: #ffffff', 'fill: #fafafa').replace(
 # Write the updated content back to the SVG file
 with open(file_path, 'w', encoding='utf-8') as file:
     file.write(updated_content)
-st.image('mini_pred.svg',use_column_width=True)
+# st.markdown(
+#     """
+#     <style>
+#         button[title^=Exit]+div [data-testid=stImage]{
+#             text-align: center;
+#             display: block;
+#             margin-left: auto;
+#             margin-right: auto;
+#             width: 100%;
+#         }
+#     </style>
+#     """, unsafe_allow_html=True
+# )
+st.image('mini_pred.svg',width=600) #use_column_width=True
 # st.pyplot(fig)
+
+
+# x_cols=['Gender','Año','Institucion','Curso','Carrera 1 Clustered']
+exclude=['Gender_Male','Institucion_Insurgentes León','Curso_BIV EN INF ADM','Carrera 1 Clustered_Law']
+meta_df=pd.get_dummies(df[x_cols], dtype='float')
+no_corr=[]
+for j in x_cols:
+  no_corr=no_corr+ [i for i in meta_df.columns if (j in i) and (i not in exclude)]
+X=meta_df[no_corr].to_numpy()
+
+y=df['y'].to_numpy()
+
+results = sm.Logit(y, X).fit()
+st.write(results.summary(xname=no_corr))
