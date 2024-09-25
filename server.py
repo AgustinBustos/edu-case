@@ -114,9 +114,11 @@ st.write('---')
 if obs_dict1[st.session_state['page']]!='':
     with stylable_container(key="container_with_border",css_styles=css_styles,):      
             st.markdown('<p style="width: 92%;">'+obs_dict1[st.session_state['page']]+'</p>',unsafe_allow_html=True)
+www='70' if st.session_state['page']=='Question 4' else '92'
+
 if obs_dict1[st.session_state['page']]!='':
     with stylable_container(key="container_with_border",css_styles=css_styles,):      
-            st.markdown('<p style="width: 92%;">'+obs_dict2[st.session_state['page']]+'</p>',unsafe_allow_html=True)
+            st.markdown(f'<p style="width: {www}%;">'+obs_dict2[st.session_state['page']]+'</p>',unsafe_allow_html=True)
 
 
 
