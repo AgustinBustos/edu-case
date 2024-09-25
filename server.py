@@ -29,7 +29,7 @@ css_styles="""
                 }
                 """
 
-btn_labels = ['Questions 1 and 2']
+btn_labels = ['Questions 1 and 2','Question 4']
 
 if "btn_prsd_status" not in st.session_state:
     st.session_state.btn_prsd_status = [True]+[False] * (len(btn_labels)-1)
@@ -40,12 +40,14 @@ pressed_colour = "#143c94"
 
 def ChangeButtonColour(widget_label, prsd_status):
     btn_bg_colour = pressed_colour if prsd_status == True else unpressed_colour
+    text_color = 'white' if prsd_status == True else '#143c94'
     htmlstr = f"""
         <script>
             var elements = window.parent.document.querySelectorAll('button');
             for (var i = 0; i < elements.length; ++i) {{ 
                 if (elements[i].innerText == '{widget_label}') {{ 
-                    elements[i].style.background = '{btn_bg_colour}'
+                    elements[i].style.background = '{btn_bg_colour}';
+                    elements[i].style.color = '{text_color}';
                 }}
             }}
         </script>
@@ -69,7 +71,8 @@ if 'page' not in st.session_state:
     st.session_state['page'] = 'Questions 1 and 2'
 
 def q(x):
-   return state_dict[st.session_state['page']][x]   
+   return state_dict[st.session_state['page']][x]  
+# st.write(q('x_cols')) 
 def changeState(x):
     btn_pressed_callback(x)
     st.session_state['page']=x
@@ -93,7 +96,7 @@ with st.sidebar:
             div[data-testid='stVerticalBlock']:has(div#chat_inner):not(:has(div#chat_outer)) {background-color: #E4F2EC};
             </style>
             """, unsafe_allow_html=True)
-        statess=['Questions 1 and 2']
+        statess=['Questions 1 and 2','Question 4']
         for m in statess:
              st.button(m,type="primary",use_container_width=True,on_click=changeState,args=(m,))  #lambda:changeState(m)
         ChkBtnStatusAndAssignColour()   
@@ -102,16 +105,18 @@ with st.sidebar:
 var=st.selectbox('Main column to analyze:',tuple([i for i in df.columns[1:] if i!='y']),[i for i in df.columns[1:] if i!='y'].index(q('var')))
 x_cols=st.multiselect("Columns to work with:",list([i for i in df.columns[1:] if i!='y']),q('x_cols'),)  #['Institucion','Año','Curso','Carrera 1 Clustered','Gender']
 # var=x_cols[0] if len(x_cols)>0 else 'Carrera 1 Clustered'
-df['ones']=1.
+df['Number of Cases']=1.
 color='University'
-bar1=px.bar(df.groupby([var,color],as_index=False).sum().sort_values('ones',ascending=False),x=var,y='ones',color=color,color_discrete_sequence=color_palette)
+bar1=px.bar(df.groupby([var,color],as_index=False).sum().sort_values('Number of Cases',ascending=False),x=var,y='Number of Cases',color=color,color_discrete_sequence=color_palette)
 bar2=px.bar(df.groupby([var],as_index=False).mean(numeric_only=True).sort_values('y',ascending=False),x=var,y='y',color_discrete_sequence=color_palette)
-scatter=px.scatter(df.groupby([var],as_index=False).agg({'y':'mean','ones':'sum'}),x='ones',y='y',color=var,size='ones',log_x=True,color_discrete_sequence=color_palette)
+scatter=px.scatter(df.groupby([var],as_index=False).agg({'y':'mean','Number of Cases':'sum'}),x='Number of Cases',y='y',color=var,size='Number of Cases',log_x=True,color_discrete_sequence=color_palette)
 st.write('---')
 if obs_dict1[st.session_state['page']]!='':
-    with stylable_container(key="container_with_border",css_styles=css_styles,):
-              
+    with stylable_container(key="container_with_border",css_styles=css_styles,):      
             st.markdown('<p style="width: 92%;">'+obs_dict1[st.session_state['page']]+'</p>',unsafe_allow_html=True)
+if obs_dict1[st.session_state['page']]!='':
+    with stylable_container(key="container_with_border",css_styles=css_styles,):      
+            st.markdown('<p style="width: 92%;">'+obs_dict2[st.session_state['page']]+'</p>',unsafe_allow_html=True)
 
 
 
@@ -125,7 +130,7 @@ st.subheader(f'Size of "{var}" against University Share')
 st.plotly_chart(scatter, use_container_width=True)
 st.write('---')
 st.subheader('Path Of Chosen Variables')
-san=sankey(df,x_cols+['University'],'ones',500,10000,-1)
+san=sankey(df,x_cols+['University'],'Number of Cases',500,10000,-1)
 st.plotly_chart(san, use_container_width=True)
 
 
@@ -198,7 +203,7 @@ with open(file_path, 'w', encoding='utf-8') as file:
 #     """, unsafe_allow_html=True
 # )
 st.write('---')
-st.subheader('Recomended Tree Variables')
+st.subheader('Tree Path Understanding')
 left_co2, cent_co2,last_co2,other2 ,ja2,last2= st.columns(6)
 with cent_co2:
     st.image('mini_pred.svg',width=600) #use_column_width=True
@@ -221,8 +226,8 @@ alpha=0.01
 while errorio:
     try:
         alpha=alpha+0.1
-        results = sm.MNLogit(y, X).fit_regularized(alpha=alpha)  #fit
-        results = sm.MNLogit(y, X).fit_regularized(alpha=alpha+1.)
+        results = sm.Logit(y, X).fit_regularized(alpha=alpha)  #fit
+        # results = sm.MNLogit(y, X).fit_regularized(alpha=alpha+0.1)
         errorio=False
     except:
         pass
