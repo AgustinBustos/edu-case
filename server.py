@@ -162,7 +162,7 @@ for cut in space:
 
 try:
   cutter=space[1:][np.argmax(np.diff(nodes))-1]#+1e-10
-#   cutter=1e-10
+
 except:
   cutter=1e-10
 # print('-----------------------------')
@@ -175,50 +175,23 @@ viz_model = dtreeviz.model(clf,
                            feature_names=x_cols_2,
                            target_name='University',
                            class_names=['other', 'own',]) #.model
-# viz_model.
-# def st_dtree(plot, height=None):
-#     dtree_html = f"<body>{plot.svg()}</body>"
-#     components.html(dtree_html, height=height)
-# st_dtree(viz_model,800)
-
-
-# st.image(viz_model._repr_svg_(), use_column_width=True)
 v = viz_model.view()
-# viz_model.figure
-# fig = viz_model.get_figure()
-# fig.patch.set_facecolor('#fafafa')
-# v.show()
-# displayHTML(v.svg())
-# st.graphviz_chart(v)
-v.save("mini_pred.svg")
-file_path="mini_pred.svg"
-with open(file_path, 'r', encoding='utf-8') as file:
-    svg_content = file.read()
 
-# Replace the old string with the new string
-updated_content = svg_content.replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"')
+# v.save("mini_pred.svg")
+# file_path="mini_pred.svg"
+# with open(file_path, 'r', encoding='utf-8') as file:
+#     svg_content = file.read()
+# updated_content = svg_content.replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"')
+# with open(file_path, 'w', encoding='utf-8') as file:
+#     file.write(updated_content)
 
-# Write the updated content back to the SVG file
-with open(file_path, 'w', encoding='utf-8') as file:
-    file.write(updated_content)
-# st.markdown(
-#     """
-#     <style>
-#         button[title^=Exit]+div [data-testid=stImage]{
-#             text-align: center;
-#             display: block;
-#             margin-left: auto;
-#             margin-right: auto;
-#             width: 100%;
-#         }
-#     </style>
-#     """, unsafe_allow_html=True
-# )
 st.write('---')
 st.subheader('Tree Path Understanding')
 left_co2, cent_co2,last_co2,other2 ,ja2,last2= st.columns(6)
 with cent_co2:
-    st.image('mini_pred.svg',width=600) #use_column_width=True
+    st.image(v._repr_svg_().replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"'), width=600)
+
+    # st.image('mini_pred.svg',width=600) #use_column_width=True
 # st.pyplot(fig)
 
 
