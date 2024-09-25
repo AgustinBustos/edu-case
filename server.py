@@ -190,11 +190,22 @@ st.write('---')
 st.subheader('Tree Path Understanding')
 left_co2, cent_co2,last_co2,other2 ,ja2,last2= st.columns(6)
 # st.write(v.dot)
-g=graphviz.Source(v.dot, format='svg')
-st.write(type(g))
+
+s = graphviz.Source(v.dot, format='svg')  #, format='svg'
+# g = graphviz.Digraph()
+
+# source_lines = str(s).splitlines()
+# # Remove 'digraph tree {'
+# source_lines.pop(0)
+# # Remove the closing brackets '}'
+# source_lines.pop(-1)
+# # Append the nodes to body
+# g.body += source_lines
+
+# st.write(type(g))
 with cent_co2:
     # st.image(v._repr_svg_().replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"'), width=600)
-    st.graphviz_chart(g,use_container_width=True)
+    st.graphviz_chart(s,use_container_width=True)
     # st.image('mini_pred.svg',width=600) #use_column_width=True
 # st.pyplot(fig)
 
