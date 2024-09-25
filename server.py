@@ -15,6 +15,7 @@ from observations import *
 import streamlit.components.v1 as components
 from streamlit_extras.stylable_container import stylable_container
 import subprocess
+import graphviz
 #143c94,#1c9c94,#cfe6da
 # subprocess.run('apt-get install graphviz')
 # sudo apt-get install graphviz
@@ -188,9 +189,12 @@ v = viz_model.view()
 st.write('---')
 st.subheader('Tree Path Understanding')
 left_co2, cent_co2,last_co2,other2 ,ja2,last2= st.columns(6)
+# st.write(v.dot)
+g=graphviz.Source(v.dot, format='svg')
+st.write(type(g))
 with cent_co2:
-    st.image(v._repr_svg_().replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"'), width=600)
-
+    # st.image(v._repr_svg_().replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"'), width=600)
+    st.graphviz_chart(g,use_container_width=True)
     # st.image('mini_pred.svg',width=600) #use_column_width=True
 # st.pyplot(fig)
 
