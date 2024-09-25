@@ -107,6 +107,7 @@ color='University'
 bar1=px.bar(df.groupby([var,color],as_index=False).sum().sort_values('ones',ascending=False),x=var,y='ones',color=color,color_discrete_sequence=color_palette)
 bar2=px.bar(df.groupby([var],as_index=False).mean(numeric_only=True).sort_values('y',ascending=False),x=var,y='y',color_discrete_sequence=color_palette)
 scatter=px.scatter(df.groupby([var],as_index=False).agg({'y':'mean','ones':'sum'}),x='ones',y='y',color=var,size='ones',log_x=True,color_discrete_sequence=color_palette)
+st.write('---')
 if obs_dict1[st.session_state['page']]!='':
     with stylable_container(key="container_with_border",css_styles=css_styles,):
               
@@ -198,21 +199,24 @@ with open(file_path, 'w', encoding='utf-8') as file:
 # )
 st.write('---')
 st.subheader('Recomended Tree Variables')
-st.image('mini_pred.svg',width=600) #use_column_width=True
+left_co2, cent_co2,last_co2,other2 ,ja2,last2= st.columns(6)
+with cent_co2:
+    st.image('mini_pred.svg',width=600) #use_column_width=True
 # st.pyplot(fig)
 
 
 # x_cols=['Gender','Año','Institucion','Curso','Carrera 1 Clustered']
-exclude=['Gender_Male','Institucion_Insurgentes León','Curso_BIV EN INF ADM','Carrera 1 Clustered_Law']
+exclude=[]#['Gender_Male','Institucion_Insurgentes León','Curso_BIV EN INF ADM','Carrera 1 Clustered_Law']
 meta_df=pd.get_dummies(df[x_cols], dtype='float')
 no_corr=[]
 for j in x_cols:
   no_corr=no_corr+ [i for i in meta_df.columns if (j in i) and (i not in exclude)]
 X=meta_df[no_corr].to_numpy()
-
+# X = sm.add_constant(X)
+names=no_corr #['constant']+
 y=df['y'].to_numpy()
 
 results = sm.Logit(y, X).fit()
 st.write('---')
 st.subheader('Z-values Of Variables')
-st.write(results.summary(xname=no_corr))
+st.write(results.summary(xname=names))
