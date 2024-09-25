@@ -204,8 +204,9 @@ s = graphviz.Source(v.dot, format='svg')  #, format='svg'
 
 # st.write(type(g))
 with cent_co2:
-    st.image(v._repr_svg_().replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"'), width=600)
-    st.graphviz_chart(s,use_container_width=True)
+    # '#FEFEBB', '#a1dab4'
+    st.image(v._repr_svg_().replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"').replace('#FEFEBB', '#143c94').replace('#a1dab4', '#1c9c94'), width=700)
+    # st.graphviz_chart(s,use_container_width=True)
     # st.image('mini_pred.svg',width=600) #use_column_width=True
 # st.pyplot(fig)
 
