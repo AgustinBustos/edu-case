@@ -3,6 +3,7 @@ import plotly.express as px
 from sklearn.datasets import load_iris
 from sklearn.tree import DecisionTreeClassifier
 import dtreeviz
+# from dtreeviz.trees import dtreeviz
 import numpy as np
 import statsmodels.api as sm
 import streamlit as st
@@ -174,14 +175,13 @@ viz_model = dtreeviz.model(clf,
                            feature_names=x_cols_2,
                            target_name='University',
                            class_names=['other', 'own',]) #.model
+# viz_model.
+# def st_dtree(plot, height=None):
+#     dtree_html = f"<body>{plot.svg()}</body>"
+#     components.html(dtree_html, height=height)
+# st_dtree(viz_model,800)
 
-def st_dtree(plot, height=None):
 
-    dtree_html = f"<body>{plot.svg()}</body>"
-
-    components.html(dtree_html, height=height)
-
-st_dtree(viz_model,800)
 # st.image(viz_model._repr_svg_(), use_column_width=True)
 v = viz_model.view()
 # viz_model.figure
