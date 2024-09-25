@@ -212,11 +212,27 @@ no_corr=[]
 for j in x_cols:
   no_corr=no_corr+ [i for i in meta_df.columns if (j in i) and (i not in exclude)]
 X=meta_df[no_corr].to_numpy()
-# X = sm.add_constant(X)
-names=no_corr #['constant']+
+X = sm.add_constant(X)
+names=['constant']+no_corr #
 y=df['y'].to_numpy()
 
-results = sm.Logit(y, X).fit()
+errorio=True
+alpha=0.01
+while errorio:
+    try:
+        alpha=alpha+0.1
+        results = sm.MNLogit(y, X).fit_regularized(alpha=alpha)  #fit
+        results = sm.MNLogit(y, X).fit_regularized(alpha=alpha+1.)
+        errorio=False
+    except:
+        pass
+# print(alpha+0.5)
 st.write('---')
 st.subheader('Z-values Of Variables')
 st.write(results.summary(xname=names))
+
+
+# from sklearn.linear_model import LogisticRegression
+
+# clf = LogisticRegression(random_state=0).fit(X, y)
+# st.write({names[index]:i for index,i in enumerate(clf.coef_[0] )})
