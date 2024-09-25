@@ -173,14 +173,23 @@ viz_model = dtreeviz.model(clf,
                            X_train=X_meta, y_train=y_meta,
                            feature_names=x_cols_2,
                            target_name='University',
-                           class_names=['other', 'own',])
+                           class_names=['other', 'own',]) #.model
 
+def st_dtree(plot, height=None):
+
+    dtree_html = f"<body>{plot.svg()}</body>"
+
+    components.html(dtree_html, height=height)
+
+st_dtree(viz_model,800)
+# st.image(viz_model._repr_svg_(), use_column_width=True)
 v = viz_model.view()
 # viz_model.figure
 # fig = viz_model.get_figure()
 # fig.patch.set_facecolor('#fafafa')
 # v.show()
 # displayHTML(v.svg())
+# st.graphviz_chart(v)
 v.save("mini_pred.svg")
 file_path="mini_pred.svg"
 with open(file_path, 'r', encoding='utf-8') as file:
