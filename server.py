@@ -20,7 +20,7 @@ import graphviz
 # subprocess.run('apt-get install graphviz')
 # sudo apt-get install graphviz
 # sudo apt install font-manager
-st.set_page_config(layout="wide")
+st.set_page_config(layout="wide",page_title="Edu-Case",page_icon="book.svg",)
 css_styles="""
                 {
                     border: 1px solid #cfe6da;
@@ -191,7 +191,7 @@ st.subheader('Tree Path Understanding')
 left_co2, cent_co2,last_co2,other2 ,ja2,last2= st.columns(6)
 # st.write(v.dot)
 
-s = graphviz.Source(v.dot, format='svg')  #, format='svg'
+# s = graphviz.Source(v.dot, format='svg')  #, format='svg'
 # g = graphviz.Digraph()
 
 # source_lines = str(s).splitlines()
@@ -204,8 +204,8 @@ s = graphviz.Source(v.dot, format='svg')  #, format='svg'
 
 # st.write(type(g))
 with cent_co2:
-    # '#FEFEBB', '#a1dab4'
-    st.image(v._repr_svg_().replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"').replace('#FEFEBB', '#143c94').replace('#a1dab4', '#1c9c94'), width=700)
+    # '#FEFEBB', '#a1dab4' 
+    st.image(v._repr_svg_().replace('fill: #ffffff', 'fill: #fafafa').replace('fill="white"', 'fill="#fafafa"').replace('#a1dab4', 'rgb(20, 60, 148)').replace('#fefebb', 'rgb(28, 156, 148)'), width=700) ##143c94   
     # st.graphviz_chart(s,use_container_width=True)
     # st.image('mini_pred.svg',width=600) #use_column_width=True
 # st.pyplot(fig)
