@@ -9,11 +9,71 @@ import streamlit as st
 from sankey import sankey
 import numpy as np
 from color_palette import color_palette
-#143c94,#1c9c94
+from states import state_dict
+from observations import *
+import streamlit.components.v1 as components
+from streamlit_extras.stylable_container import stylable_container
+#143c94,#1c9c94,#cfe6da
 
 # sudo apt-get install graphviz
 # sudo apt install font-manager
 st.set_page_config(layout="wide")
+css_styles="""
+                {
+                    border: 1px solid #cfe6da;
+                    border-radius: 1rem;
+                    padding:calc(1em - 1px);
+                    padding-left:calc(1em - 2px);
+                    background-color:#cfe6da;
+                    
+                }
+                """
+
+btn_labels = ['Questions 1 and 2']
+
+if "btn_prsd_status" not in st.session_state:
+    st.session_state.btn_prsd_status = [True]+[False] * (len(btn_labels)-1)
+
+        
+unpressed_colour = "#cfe6da"
+pressed_colour = "#143c94"
+
+def ChangeButtonColour(widget_label, prsd_status):
+    btn_bg_colour = pressed_colour if prsd_status == True else unpressed_colour
+    htmlstr = f"""
+        <script>
+            var elements = window.parent.document.querySelectorAll('button');
+            for (var i = 0; i < elements.length; ++i) {{ 
+                if (elements[i].innerText == '{widget_label}') {{ 
+                    elements[i].style.background = '{btn_bg_colour}'
+                }}
+            }}
+        </script>
+        """
+    components.html(f"{htmlstr}", height=0, width=0)
+
+def ChkBtnStatusAndAssignColour():
+    for i in range(len(btn_labels)):
+        ChangeButtonColour(btn_labels[i], st.session_state.btn_prsd_status[i])
+
+def btn_pressed_callback(x):
+    i=btn_labels.index(x)+1
+    st.session_state.btn_prsd_status = [False] * len(btn_labels)
+    st.session_state.btn_prsd_status[i-1] = True
+
+
+
+
+
+if 'page' not in st.session_state:
+    st.session_state['page'] = 'Questions 1 and 2'
+
+def q(x):
+   return state_dict[st.session_state['page']][x]   
+def changeState(x):
+    btn_pressed_callback(x)
+    st.session_state['page']=x
+
 
 st.title('Edu-Case')
 df=pd.read_csv('Informe Alumnos Insurgentes Processed.csv')
@@ -27,54 +87,42 @@ with st.sidebar:
     with cent_co:
         st.image('uin.svg',width=170)
     st.write('')
-    with st.expander("Visualization:"):
-        optionss=('Manufacturer', 'Brand', 'Channel', 'Sub Channel', 'Variable')
-        optionss2=(  'Investment (R$)',
-            'Comunicação (One Score)', 
-            'Número de eventos ',
-            'Número de Participantes em Eventos',  
-            'GRP',
-            'Impressions',
-            'Faces/Telas',
-            'Number of Installations')
-
-        # by = st.selectbox(
-        #     "By:",
-        #     optionss,index=optionss.index(q('by')))
-        # colors = st.selectbox(
-        #     "Color:",
-        #     optionss,optionss.index(q('colors')))
-        # selected_metric = st.selectbox(
-        #     "Metric:",optionss2,optionss2.index(q('selected_metric'))
-        #     )  
+    
     with st.container():
         st.markdown("""<style>
             div[data-testid='stVerticalBlock']:has(div#chat_inner):not(:has(div#chat_outer)) {background-color: #E4F2EC};
             </style>
             """, unsafe_allow_html=True)
-        statess=['Market Total Marketing Investment','Total Investment by Channel','Total Investment by Brand','Ambev Total Investment','Ambev Trade Investment Desagregation','Ambev Events Investment Desagregation','Ambev Media Investment Desagregation','Ambev Trade Materials','Ambev Events Number','Ambev Media GRP','Ambev Media Impressions','Ambev Media Faces/Telas']
-        # for m in statess:
-        #      st.button(m,type="primary",use_container_width=True,on_click=changeState,args=(m,))  #lambda:changeState(m)
-        # ChkBtnStatusAndAssignColour()   
+        statess=['Questions 1 and 2']
+        for m in statess:
+             st.button(m,type="primary",use_container_width=True,on_click=changeState,args=(m,))  #lambda:changeState(m)
+        ChkBtnStatusAndAssignColour()   
           
 
-var=st.selectbox('Main column to analyze:',tuple([i for i in df.columns[1:] if i!='y']))
-x_cols=st.multiselect("Columns to work with:",list([i for i in df.columns[1:] if i!='y']),['Institucion','Año','Curso','Carrera 1 Clustered','Gender'],)
+var=st.selectbox('Main column to analyze:',tuple([i for i in df.columns[1:] if i!='y']),[i for i in df.columns[1:] if i!='y'].index(q('var')))
+x_cols=st.multiselect("Columns to work with:",list([i for i in df.columns[1:] if i!='y']),q('x_cols'),)  #['Institucion','Año','Curso','Carrera 1 Clustered','Gender']
 # var=x_cols[0] if len(x_cols)>0 else 'Carrera 1 Clustered'
 df['ones']=1.
 color='University'
 bar1=px.bar(df.groupby([var,color],as_index=False).sum().sort_values('ones',ascending=False),x=var,y='ones',color=color,color_discrete_sequence=color_palette)
 bar2=px.bar(df.groupby([var],as_index=False).mean(numeric_only=True).sort_values('y',ascending=False),x=var,y='y',color_discrete_sequence=color_palette)
 scatter=px.scatter(df.groupby([var],as_index=False).agg({'y':'mean','ones':'sum'}),x='ones',y='y',color=var,size='ones',log_x=True,color_discrete_sequence=color_palette)
+if obs_dict1[st.session_state['page']]!='':
+    with stylable_container(key="container_with_border",css_styles=css_styles,):
+              
+            st.markdown('<p style="width: 92%;">'+obs_dict1[st.session_state['page']]+'</p>',unsafe_allow_html=True)
+
+
 
 col1, col2 = st.columns(2)
 col1.subheader(f'Chosen University By "{var}"')
 col1.plotly_chart(bar1, use_container_width=True)
 col2.subheader(f'Chosen University Share By "{var}"')
 col2.plotly_chart(bar2, use_container_width=True)
+st.write('---')
 st.subheader(f'Size of "{var}" against University Share')
 st.plotly_chart(scatter, use_container_width=True)
-
+st.write('---')
 st.subheader('Path Of Chosen Variables')
 san=sankey(df,x_cols+['University'],'ones',500,10000,-1)
 st.plotly_chart(san, use_container_width=True)
@@ -148,6 +196,7 @@ with open(file_path, 'w', encoding='utf-8') as file:
 #     </style>
 #     """, unsafe_allow_html=True
 # )
+st.write('---')
 st.subheader('Recomended Tree Variables')
 st.image('mini_pred.svg',width=600) #use_column_width=True
 # st.pyplot(fig)
@@ -164,5 +213,6 @@ X=meta_df[no_corr].to_numpy()
 y=df['y'].to_numpy()
 
 results = sm.Logit(y, X).fit()
+st.write('---')
 st.subheader('Z-values Of Variables')
 st.write(results.summary(xname=no_corr))
