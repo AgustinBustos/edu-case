@@ -13,8 +13,9 @@ from states import state_dict
 from observations import *
 import streamlit.components.v1 as components
 from streamlit_extras.stylable_container import stylable_container
+import subprocess
 #143c94,#1c9c94,#cfe6da
-
+subprocess.run('sudo apt-get install graphviz')
 # sudo apt-get install graphviz
 # sudo apt install font-manager
 st.set_page_config(layout="wide")
